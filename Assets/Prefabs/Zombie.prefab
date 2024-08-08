@@ -12,6 +12,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie
       objectReference: {fileID: 0}
+    - target: {fileID: 100096, guid: 6bc76eedb6629574a83870562bc0c4ee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 100100, guid: 6bc76eedb6629574a83870562bc0c4ee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 400096, guid: 6bc76eedb6629574a83870562bc0c4ee, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2
@@ -268,12 +276,13 @@ MonoBehaviour:
   startingHealth: 100
   whatIsTarget:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   hitEffect: {fileID: 7219596778466675784}
   deathSound: {fileID: 8300000, guid: b86f03005ed394911b43027aeaaedeb7, type: 3}
   hitSound: {fileID: 8300000, guid: c3d8accfc053f004ca665a1c8c4a6919, type: 3}
   damage: 20
   timeBetAttack: 0.5
+  zombieData: {fileID: 11400000, guid: 30c5a21bf82beb7488fbd2e246961cf9, type: 2}
 --- !u!4 &3995138932225200235 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400096, guid: 6bc76eedb6629574a83870562bc0c4ee,
@@ -288,9 +297,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3995138932225200235}
     m_Modifications:
+    - target: {fileID: 1000010159161520, guid: da33d2f1d5c4b41689d8063e19e3a7dc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1000012909287652, guid: da33d2f1d5c4b41689d8063e19e3a7dc, type: 3}
       propertyPath: m_Name
       value: BloodSprayEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012909287652, guid: da33d2f1d5c4b41689d8063e19e3a7dc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4000013488956786, guid: da33d2f1d5c4b41689d8063e19e3a7dc, type: 3}
       propertyPath: m_LocalPosition.x

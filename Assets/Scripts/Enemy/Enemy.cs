@@ -22,6 +22,9 @@ public class Enemy : LivingEntity
     public float timeBetAttack = 0.5f; // 공격 간격
     private float lastAttackTime; // 마지막 공격 시점
 
+    public ZombieData zombieData; //좀비데이터 스크립터블 오브젝트
+
+
     // 추적할 대상이 존재하는지 알려주는 프로퍼티
     private bool hasTarget
     {
@@ -51,18 +54,13 @@ public class Enemy : LivingEntity
     }
 
     // 적 AI의 초기 스펙을 결정하는 셋업 메서드
-    public void Setup(float newHealth, float newDamage,
-        float newSpeed, Color skinColor)
+    public void Setup(ZombieData data) // Setup 메서드 수정
     {
-        // 체력 설정
-        startingHealth = newHealth;
-        health = newHealth;
-        // 공격력 설정
-        damage = newDamage;
-        // 내비메쉬 에이전트의 이동 속도 설정
-        pathFinder.speed = newSpeed;
-        // 렌더러가 사용중인 머테리얼의 컬러를 변경, 외형 색이 변함
-        enemyRenderer.material.color = skinColor;
+        startingHealth = data.health;
+        health = data.health;
+        damage = data.damage;
+        pathFinder.speed = data.speed;
+        enemyRenderer.material.color = data.skinColor;
     }
 
     private void Start()

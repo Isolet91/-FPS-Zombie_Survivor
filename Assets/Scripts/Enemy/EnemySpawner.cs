@@ -1,11 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 // 적 게임 오브젝트를 주기적으로 생성
 public class EnemySpawner : MonoBehaviour
 {
     public Enemy enemyPrefab; // 생성할 적 AI
 
+    public ZombieData zombieData;
     public Transform[] spawnPoints; // 적 AI를 소환할 위치들
 
     public float damageMax = 40f; // 최대 공격력
@@ -84,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
         Enemy enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
 
         // 생성한 적의 능력치와 추적 대상 설정
-        enemy.Setup(health, damage, speed, skinColor);
+        enemy.Setup(zombieData);
 
         // 생성된 적을 리스트에 추가
         enemies.Add(enemy);

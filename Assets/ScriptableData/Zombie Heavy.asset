@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe761233ead525d4d95a808f8d3bffa3, type: 3}
   m_Name: Zombie Heavy
   m_EditorClassIdentifier: 
-  health: 100
-  damage: 20
-  speed: 2
-  skinColor: {r: 1, g: 1, b: 1, a: 1}
+  health: 250
+  damage: 50
+  speed: 1
+  skinColor: {r: 0.047169805, g: 0.042052325, b: 0.042052325, a: 1}

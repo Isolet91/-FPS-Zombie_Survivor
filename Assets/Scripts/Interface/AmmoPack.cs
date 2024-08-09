@@ -8,7 +8,7 @@ public class AmmoPack : MonoBehaviour, IItem
 
     public void Use(GameObject target)
     {
-       /*
+       
         //전달받은 게임 오브젝트로부터 PlayerShooter 컴포넌트 가져오기
         PlayerShooter playerShooter = target.GetComponent<PlayerShooter>();
 
@@ -24,6 +24,6 @@ public class AmmoPack : MonoBehaviour, IItem
 
         //target에 탄알을 추가하는 처리
         Debug.Log("탄알이 증가했다 : " + ammo);
-       */
+       
     }
 }

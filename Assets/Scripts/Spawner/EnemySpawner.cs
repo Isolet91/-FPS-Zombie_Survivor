@@ -5,24 +5,16 @@ using UnityEngine.UI;
 // 적 게임 오브젝트를 주기적으로 생성
 public class EnemySpawner : MonoBehaviour
 {
-    public Enemy enemyPrefab; // 생성할 적 AI
+    public Enemy enemyPrefab;       // 생성할 적 AI
 
-    public ZombieData zombieData;
-    public Transform[] spawnPoints; // 적 AI를 소환할 위치들
-
-    public float damageMax = 40f; // 최대 공격력
-    public float damageMin = 20f; // 최소 공격력
-
-    public float healthMax = 200f; // 최대 체력
-    public float healthMin = 100f; // 최소 체력
-
-    public float speedMax = 3f; // 최대 속도
-    public float speedMin = 1f; // 최소 속도
-
-    public Color strongEnemyColor = Color.red; // 강한 적 AI가 가지게 될 피부색
+    public ZombieData[] zombieDatas; // 사용할 좀비 셋업 데이터들
+    
+    public Transform[] spawnPoints; // 적 AI를 소환할 위치들 (생성 위치를 사용한 트랜스폼 저장 배열)
 
     private List<Enemy> enemies = new List<Enemy>(); // 생성된 적들을 담는 리스트
-    private int wave; // 현재 웨이브
+
+    //모든 좀비 제거할 때마다 웨이브 1씩 증가, 웨이브 값이 클수록 한번에 생성되는 좀비 수 증가
+    private int wave; // 현재 웨이브 
 
     private void Update()
     {
@@ -61,31 +53,25 @@ public class EnemySpawner : MonoBehaviour
         // spawnCount 만큼 적을 생성
         for (int i = 0; i < spawnCount; i++)
         {
-            // 적의 세기를 0%에서 100% 사이에서 랜덤 결정
-            float enemyIntensity = Random.Range(0f, 1f);
+            
             // 적 생성 처리 실행
-            CreateEnemy(enemyIntensity);
+            CreateEnemy();
         }
     }
 
     // 적을 생성하고 생성한 적에게 추적할 대상을 할당
-    private void CreateEnemy(float intensity)
+    private void CreateEnemy()
     {
-        // intensity를 기반으로 적의 능력치 결정
-        float health = Mathf.Lerp(healthMin, healthMax, intensity);
-        float damage = Mathf.Lerp(damageMin, damageMax, intensity);
-        float speed = Mathf.Lerp(speedMin, speedMax, intensity);
+        // 사용할 좀비 데이터 랜덤으로 결정
+        ZombieData zombieData = zombieDatas[Random.Range(0, zombieDatas.Length)];
 
-        // intensity를 기반으로 하얀색과 enemyStrength 사이에서 적의 피부색 결정
-        Color skinColor = Color.Lerp(Color.white, strongEnemyColor, intensity);
-
-        // 생성할 위치를 랜덤으로 결정
+        //생성할 위치를 랜덤으로 결정
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
         // 적 프리팹으로부터 적 생성
         Enemy enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
 
-        // 생성한 적의 능력치와 추적 대상 설정
+        // 생성한 적의 능력치 설정
         enemy.Setup(zombieData);
 
         // 생성된 적을 리스트에 추가

@@ -9,7 +9,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 {
     private string gameVersion = "1";  // 게임 버전
 
-    private Text connectionInfoText; // 네트워크 정보를 표시할 텍스트
+    public Text connectionInfoText; // 네트워크 정보를 표시할 텍스트
     public Button joinButton;          // 룸 접속 버튼
     
     //게임 실행과 동시에 마스터 서버 접속 시도

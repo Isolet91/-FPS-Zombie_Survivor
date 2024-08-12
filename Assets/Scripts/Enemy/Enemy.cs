@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI; // AI, 내비게이션 시스템 관련 코드를 가져오기
+using Photon.Pun;
 
 // 적 AI를 구현한다
 public class Enemy : LivingEntity
@@ -54,6 +55,7 @@ public class Enemy : LivingEntity
     }
 
     // 적 AI의 초기 스펙을 결정하는 셋업 메서드
+    [PunRPC]
     public void Setup(ZombieData data) // Setup 메서드 수정
     {
         startingHealth = data.health;
@@ -65,6 +67,12 @@ public class Enemy : LivingEntity
 
     private void Start()
     {
+
+        // 호스트가 아니라면 AI의 추적 루틴을 시작하지 않음
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // 게임 오브젝트 활성화와 동시에 AI의 추적 루틴 시작
         StartCoroutine(UpdatePath());
     }

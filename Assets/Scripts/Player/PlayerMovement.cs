@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
 //리지드바디가 없으면 안되므로 이 스크립트가 추가된 오브젝트는 리지드바디를 반드시 부착
 [RequireComponent(typeof(Rigidbody))] 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviourPun
 {
    //PlayerInput 스크립트에서 감지한 입력값을 사용하여 실제로 캐릭터를 이동시키고 회전시키는 스크립트
 
@@ -26,16 +26,13 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 게임오버 상태에서는 움직이지 않도록 (게임매니저가 구현되면 주석 해제)
-        /*
-        if (GameManager.instance != null && GameManager.instance.isGameover)
+        //로컬 플레이어만 직접 위치와 회전을 변경 가능
+        if (!photonView.IsMine)
         {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
             return;
         }
-        */
-
+        
+     
         // 입력값을 기반으로 움직임과 회전을 처리
         Move();
         Rotate();

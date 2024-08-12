@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInput : MonoBehaviourPun
 {
     //플레이어 캐릭터를 조작하기 위한 사용자 입력을 감지
     //감지된 입력값을 다른 컴포넌트들이 사용할수 있도록 제공
@@ -26,8 +27,15 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //로컬 플레이어가 아닌 경우 입력을 받지 않음
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+       
         //게임오버 상태에서는 사용자 입력을 감지하지 않는다
-      /* if(GameManager.instance != null&& GameManager.instance.isGameover)
+      if(GameManager.instance != null&& GameManager.instance.isGameover)
         {
             move = 0;
             rotate = 0;
@@ -35,7 +43,7 @@ public class PlayerInput : MonoBehaviour
             reload = false;
             return;
         }
-      */
+      
 
 
         //move에 관한 입력 감지

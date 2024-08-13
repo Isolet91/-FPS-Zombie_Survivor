@@ -111,42 +111,8 @@ public class Gun : MonoBehaviourPun, IPunObservable
     // 실제 발사 처리
     private void Shot()
     {
-        // 레이캐스트에 의한 충돌 정보를 저장하는 컨테이너
-        RaycastHit hit;
-        // 총알이 맞은 곳을 저장할 변수
-        Vector3 hitPosition = Vector3.zero;
-
-        // 레이캐스트(시작지점, 방향, 충돌 정보 컨테이너, 사정거리)
-        if (Physics.Raycast(fireTransform.position,
-            fireTransform.forward, out hit, fireDistance))
-        {
-            // 레이가 어떤 물체와 충돌한 경우
-
-            // 충돌한 상대방으로부터 IDamageable 오브젝트 가져오기
-            IDamageable target =
-                hit.collider.GetComponent<IDamageable>();
-
-            // 상대방으로 부터 IDamageable 오브젝트를 가져오는데 성공했다면
-            if (target != null)
-            {
-                // 상대방의 OnDamage 함수를 실행시켜서 상대방에게 데미지 주기
-                target.OnDamage(gunData.damage, hit.point, hit.normal);
-            }
-
-            // 레이가 충돌한 위치 저장
-            hitPosition = hit.point;
-        }
-        else
-        {
-            // 레이가 다른 물체와 충돌하지 않았다면
-            // 총알이 최대 사정거리까지 날아갔을때의 위치를 충돌 위치로 사용
-            hitPosition = fireTransform.position +
-                          fireTransform.forward * fireDistance;
-        }
-
-        // 발사 이펙트 재생 시작
-        StartCoroutine(ShotEffect(hitPosition));
-        
+        //실제 발사 처리는 호스트에게 대리
+        photonView.RPC("ShotProcessOnServer", RpcTarget.MasterClient);
         // 남은 탄환의 수를 -1
         magAmmo--;
         if (magAmmo <= 0)

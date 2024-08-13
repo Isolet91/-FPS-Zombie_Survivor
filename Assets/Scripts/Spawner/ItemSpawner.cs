@@ -49,12 +49,25 @@ public class ItemSpawner : MonoBehaviour
     // 실제 아이템 생성 처리
     private void Spawn()
     {
-        // 플레이어 근처의 네브 메쉬위의 랜덤 위치 가져오기
-        Vector3 spawnPosition = GetRandomPointOnNavMesh(playerTransform.position, maxDistance);
+    //플레이어 캐릭터 위치를 사용하지 않음
+    //게임이 멀티플레이어로 변형되면서 플레이어 캐릭터가 둘 이상 존재하게 되었으므로 변경된 스포너는
+    //아이템을 월드의 중심에서 maxDistance 반경 내의 랜덤 위치에 생성
+    //따라서 기존 변수 playerTransform 선언을 삭제, Spawn() 메서드에서 playerTransform.position을 사용한
+    //부분을 다음과 같이 0,0,0에 대응하는 Vector3.zero로 변경
+
+        // (0,0,0)을 기준으로 maxDistance 안에서 네브 메쉬위의 랜덤 위치 가져오기
+        Vector3 spawnPosition = GetRandomPointOnNavMesh(Vector3.zero, maxDistance);
+
         spawnPosition += Vector3.up * 0.5f; // 바닥에서 0.5만큼 위로 올리기
 
         //생성할 아이템을 무작위로 하나 선택
         GameObject itemToCreate = items[Random.Range(0, items.Length)];
+
+        //PhotonNetwork.Instantiate() 사용
+        //호스트와 씬 뿐만 아니라 다른 클라이언트의 씬에서도 동일한 게임 오브젝트가 생성되고,
+        //네트워크상에서 동일한 게임 오브젝트로 취급되도록 하려면 PhotonNetwork.Instantiate()를 사용
+        //단 PhotonNetwork.Instantiate() 메서드는 프리팹을 직접 받지 못하고 프리팹의 이름을 받기 때문에
+        //여러 개의 아이템 프리팹 중 선택한 아이템 프리팹의 이름을 넣도록 Spawn()의 코드를 수정
 
         // 네트워크의 모든 클라이언트에서 해당 아이템 생성 
         GameObject item = 

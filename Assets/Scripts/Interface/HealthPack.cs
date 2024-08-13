@@ -20,7 +20,7 @@ public class HealthPack : MonoBehaviourPun, IItem
             life.RestoreHealth(health);
         }
 
-        // 사용되었으므로, 자신을 파괴
+        // 사용되었으므로, 모든 클라이언트에서의 자신을 파괴
        PhotonNetwork.Destroy(gameObject);
     }
 }

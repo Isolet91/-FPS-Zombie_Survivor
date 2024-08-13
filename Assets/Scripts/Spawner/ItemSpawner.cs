@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI; // 내비메쉬 관련 코드
+using Photon.Pun;
 
 // 주기적으로 아이템을 플레이어 근처에 생성하는 스크립트
 public class ItemSpawner : MonoBehaviour
@@ -48,11 +49,26 @@ public class ItemSpawner : MonoBehaviour
         Vector3 spawnPosition = GetRandomPointOnNavMesh(playerTransform.position, maxDistance);
         spawnPosition += Vector3.up * 0.5f; // 바닥에서 0.5만큼 위로 올리기
 
+        //생성할 아이템을 무작위로 하나 선택
+        GameObject itemToCreate = items[Random.Range(0, items.Length)];
+
         // 아이템 중 하나를 무작위로 골라 랜덤 위치에 생성
         GameObject selectedItem = items[Random.Range(0, items.Length)];
         GameObject item = Instantiate(selectedItem, spawnPosition, Quaternion.identity);
         // 생성된 아이템을 5초 뒤에 파괴
         Destroy(item, 5f);
+    }
+
+    //포톤의 PhotonNetwork.Destroy를 지연 실행하는 코루틴
+    IEnumerator DestroyAfter(GameObject target, float delay)
+    {
+        //delay 만큼 대기
+        yield return new WaitForSeconds(delay);
+        //target이 파괴되지 않았으면 파괴 실행
+        if (target != null)
+        {
+            PhotonNetwork.Destroy(target);
+        }
     }
 
 

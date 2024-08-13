@@ -130,6 +130,7 @@ public class Enemy : LivingEntity
     }
 
     // 데미지를 입었을때 실행할 처리
+    [PunRPC]
     public override void OnDamage(float damage,
         Vector3 hitPoint, Vector3 hitNormal)
     {

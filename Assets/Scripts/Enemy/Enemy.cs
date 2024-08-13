@@ -77,10 +77,22 @@ public class Enemy : LivingEntity
         StartCoroutine(UpdatePath());
     }
 
-    private void Update()
+    private void Update() //Update 메서드를 호스트에서만 실행
     {
+        // 호스트가 아니라면 애니메이션의 파라미터를 직접 갱신하지 않음
+        // 호스트가 파라미터를 갱신하면 클라이언트들에게 자동으로 전달되기 때문
+        // if문을 추가하여 클라이언트가 호스트가 아닌 경우네는
+        // 애니메이션 파라미터를 갱신하는 처리를 실행하지 못하게 함
+        // 물론 호스트에서만 좀비의 애니메이터 파라미터를 직접 갱신해도
+        // 포톤애니메이터 뷰 컴포넌트에 의해 동기화되어
+        // 클라이언트에서도 같은 애니메이션이 재생되기 때문에 문제없음
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // 추적 대상의 존재 여부에 따라 다른 애니메이션을 재생
         enemyAnimator.SetBool("HasTarget", hasTarget);
+        
     }
 
     // 주기적으로 추적할 대상의 위치를 찾아 경로를 갱신
@@ -176,6 +188,11 @@ public class Enemy : LivingEntity
 
     private void OnTriggerStay(Collider other)
     {
+        // 호스트가 아니라면 공격 실행 불가
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // 자신이 사망하지 않았으며,
         // 최근 공격 시점에서 timeBetAttack 이상 시간이 지났다면 공격 가능
         if (!dead && Time.time >= lastAttackTime + timeBetAttack)

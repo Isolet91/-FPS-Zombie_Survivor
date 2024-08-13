@@ -73,7 +73,7 @@ public class ItemSpawner : MonoBehaviour
         GameObject item = 
             PhotonNetwork.Instantiate(itemToCreate.name, spawnPosition, Quaternion.identity);
         // 생성된 아이템을 5초 뒤에 파괴
-        Destroy(item, 5f);
+        StartCoroutine(DestroyAfter(item, 5f));
     }
 
     //포톤의 PhotonNetwork.Destroy를 지연 실행하는 코루틴

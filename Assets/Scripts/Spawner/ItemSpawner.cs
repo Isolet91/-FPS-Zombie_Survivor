@@ -29,9 +29,13 @@ public class ItemSpawner : MonoBehaviour
     // 주기적으로 아이템 생성 처리 실행
     private void Update()
     {
+        // 호스트에서만 아이템 직접 생성 가능
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
         // 현재 시점이 마지막 생성 시점에서 생성 주기 이상 지남
-        // && 플레이어 캐릭터가 존재함
-        if (Time.time >= lastSpawnTime + timeBetSpawn && playerTransform != null)
+        if (Time.time >= lastSpawnTime + timeBetSpawn)
         {
             // 마지막 생성 시간 갱신
             lastSpawnTime = Time.time;
@@ -52,9 +56,9 @@ public class ItemSpawner : MonoBehaviour
         //생성할 아이템을 무작위로 하나 선택
         GameObject itemToCreate = items[Random.Range(0, items.Length)];
 
-        // 아이템 중 하나를 무작위로 골라 랜덤 위치에 생성
-        GameObject selectedItem = items[Random.Range(0, items.Length)];
-        GameObject item = Instantiate(selectedItem, spawnPosition, Quaternion.identity);
+        // 네트워크의 모든 클라이언트에서 해당 아이템 생성 
+        GameObject item = 
+            PhotonNetwork.Instantiate(itemToCreate.name, spawnPosition, Quaternion.identity);
         // 생성된 아이템을 5초 뒤에 파괴
         Destroy(item, 5f);
     }

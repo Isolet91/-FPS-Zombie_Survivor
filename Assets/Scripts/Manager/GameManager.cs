@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
+using UnityEngine.SceneManagement;
 // 점수와 게임 오버 여부, 게임 UI를 관리하는 게임 매니저
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     // 외부에서 싱글톤 오브젝트를 가져올때 사용할 프로퍼티
     public static GameManager instance
@@ -27,6 +28,37 @@ public class GameManager : MonoBehaviour
     private int score = 0; // 현재 게임 점수
     public bool isGameover { get; private set; } // 게임 오버 상태
 
+    public GameObject playerPrefab; //생성할 플레이어 캐릭터 프리팹
+
+    //IPunObservable 상속, OnPhotonSerializeView 구현
+    //IPunObservable 인터페이스를 상속하고  OnPhotonSerializeView() 메서드를 구현하여
+    //로컬에서 리모트로의 점수 동기화를 구현하면
+    //호스트에서 갱신된 점수가 다른 클라이언트에도 자동 반영
+
+
+    //주기적으로 자동 실행되는, 동기화 메서드
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        //로컬 오브젝트라면, 쓰기 부분이 실행됨
+        if (stream.IsWriting)
+        {
+            //네트워크를 통해 score 값을 보내기
+            stream.SendNext(score);
+        }
+        else
+        {
+            //리모트 오브젝트라면 읽기 부분이 실행됨
+
+            //네트워크를 통해 score 값 받기
+            score = (int)stream.ReceiveNext();
+            //동기화하여 받은 점수를 UI로 표시
+            UIManager.instance.UpdateScoreText(score);
+        }
+
+
+
+       
+    }
     private void Awake()
     {
         // 씬에 싱글톤 오브젝트가 된 다른 GameManager 오브젝트가 있다면
@@ -37,10 +69,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Start()에서 로컬 플레이어 캐릭터 생성
+    //PhotonNewwork.Instantiate() 메서드를 실행해 자신의 로컬 플레이어 캐릭터를 네트워크상에서 생성
+    //즉, 자신의 입장에서는 로컬, 타인의 입장에서는 리모트인 플레이어 캐릭터가 생성
+    //GameManager 스크립트의 Start() 메서드와 그 안의 PhotonNetwork.Instantiate()는 각각의 클라이언트에서 따로 실행
+    
+    //게임 시작과 동시에 플레이어가 될 게임 오브젝트를 생성
     private void Start()
     {
-        // 플레이어 캐릭터의 사망 이벤트 발생시 게임 오버
-        FindObjectOfType<PlayerHealth>().onDeath += EndGame;
+        // 생성할 랜덤 위치 지정
+        Vector3 randomSpawnPos = Random.insideUnitSphere * 5f;
+        // 위치 y값은 0으로 변경
+        randomSpawnPos.y = 0f;
+
+        // 네트워크 상의 모든 클라이언트들에서 생성 실행
+        // 단, 해당 게임 오브젝트의 주도권은, 생성 메서드를 직접 실행한 클라이언트에게 있음
+        PhotonNetwork.Instantiate(playerPrefab.name, randomSpawnPos, Quaternion.identity);
     }
 
 
@@ -64,5 +108,26 @@ public class GameManager : MonoBehaviour
         isGameover = true;
         // 게임 오버 UI를 활성화
         UIManager.instance.SetActiveGameoverUI(true);
+    }
+
+    //키보드 입력을 감지하고 룸을 나가게 함
+    //GameManager 스크립트에 새로 추가된 Update() 메서드에서는
+    //키보드의 ESC 키 (KeyCode.Escape)를 눌렀을 때 네트워크 룸 나가기를 실행
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+    }
+
+    //OnLeftRoom() 메서드는 로컬 플레이어가 현재 게임 룸을 나갈 때 자동 실행
+    //SceneManager.LoadScene("Lobby"); 에 의해 로컬 클라이언트의 씬만 Lobby씬으로 변경되고,
+    //다른 클라이언트는 여전히 룸에 접속된 상태
+
+    //룸을 나갈 때 자동 실행되는 메서드
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Lobby");
     }
 }
